@@ -1,3 +1,4 @@
+# B2 modify
 import datetime
 
 from flask import Flask as _Flask, flash, redirect
@@ -457,4 +458,3 @@ if __name__ == '__main__':
 
 # R2 over
 # R4 over
-# B2 modify
