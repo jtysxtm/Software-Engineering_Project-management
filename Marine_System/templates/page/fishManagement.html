@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>渔场水产数据</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../static/lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../static/css/public.css" media="all">
+</head>
+
+<head>
+    <meta charset="UTF-8">
+    <title>水产信息表</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .video-container {
+            text-align: center;
+            /* 解决内联元素间隙问题 */
+            font-size: 0;
+        }
+        video {
+            display: inline-block;
+            margin: auto;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+<table>
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>水产名称</th>
+            <th>水产种类</th>
+            <th>水产图片</th>
+            <th>水产介绍</th>
+            <th>最高水温</th>
+            <th>最低水温</th>
+            <th>最适水温</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>fish1</td>
+            <td>Bream</td>
+            <td>温带鱼</td>
+            <td><img src="/../static/images/bream.png" width="250" height="150"></td>
+            <td>布雷姆鱼广泛分布于欧洲及亚洲的淡水水域</td>
+            <td>28°C</td>
+            <td>4°C</td>
+            <td>20°C</td>
+        </tr>
+        <tr>
+            <td>fish2</td>
+            <td>Roach</td>
+            <td>温带鱼</td>
+            <td><img src="/../static/images/roach.jpg" width="250" height="150"></td>
+            <td>罗非鱼常见于欧洲及亚洲的河流和湖泊中</td>
+            <td>28°C</td>
+            <td>4°C</td>
+            <td>18°C</td>
+        </tr>
+        <tr>
+            <td>fish3</td>
+            <td>Whitefish</td>
+            <td>冷带鱼</td>
+            <td><img src="/../static/images/whitefish.jpg" width="250" height="150"></td>
+            <td>白鱼通常生活在寒冷的淡水或稍咸的水域</td>
+            <td>20°C</td>
+            <td>0°C</td>
+            <td>10°C</td>
+        </tr>
+        <tr>
+            <td>fish4</td>
+            <td>Parkki</td>
+            <td>冷带鱼</td>
+            <td><img src="/../static/images/parkki.jpg" width="250" height="150"></td>
+            <td>主要分布在亚洲和欧洲的淡水鱼</td>
+            <td>20°C</td>
+            <td>0°C</td>
+            <td>10°C</td>
+        </tr>
+        <tr>
+            <td>fish5</td>
+            <td>Perch</td>
+            <td>温带鱼</td>
+            <td><img src="/../static/images/perch.jpg" width="250" height="150"></td>
+            <td>包括淡水和海水种类，如黄鲈</td>
+            <td>28°C</td>
+            <td>4°C</td>
+            <td>20°C</td>
+        </tr>
+        <tr>
+            <td>fish6</td>
+            <td>Pike</td>
+            <td>温带鱼</td>
+            <td><img src="/../static/images/pike.jpg" width="250" height="150"></td>
+            <td>一种凶猛的淡水鱼，常见于北半球</td>
+            <td>25°C</td>
+            <td>0°C</td>
+            <td>15°C</td>
+        </tr>
+        <tr>
+            <td>fish7</td>
+            <td>Smelt</td>
+            <td>冷带鱼</td>
+            <td><img src="/../static/images/smelt.jpg" width="250" height="150"></td>
+            <td>小型海水和淡水鱼类，常作为食用鱼</td>
+            <td>20°C</td>
+            <td>0°C</td>
+            <td>10°C</td>
+        </tr>
+        <tr>
+            <td>fish8</td>
+            <td>Salmon</td>
+            <td>冷带鱼</td>
+            <td><img src="/../static/images/salmon.jpg" width="250" height="150"></td>
+            <td>三文鱼是冷带水域的典型鱼类，以其跨洋洄游而闻名</td>
+            <td>22°C</td>
+            <td>4°C</td>
+            <td>14°C</td>
+        </tr>
+        <tr>
+            <td>fish9</td>
+            <td>Sardine</td>
+            <td>热带鱼</td>
+            <td><img src="/../static/images/sardine.jpg" width="250" height="150"></td>
+            <td>沙丁鱼是小型的海水鱼，常在温暖的海域中形成大群</td>
+            <td>30°C</td>
+            <td>10°C</td>
+            <td>20°C</td>
+        </tr>
+        <tr>
+            <td>fish10</td>
+            <td>Trout</td>
+            <td>温带鱼</td>
+            <td><img src="/../static/images/trout.jpg" width="250" height="150"></td>
+            <td>鳟鱼多生活在较冷的淡水环境中，但也适应于人工养殖场</td>
+            <td>24°C</td>
+            <td>4°C</td>
+            <td>15°C</td>
+        </tr>
+        <tr>
+            <td>fish11</td>
+            <td>Herring</td>
+            <td>温带鱼</td>
+            <td><img src="/../static/images/herring.png" width="250" height="150"></td>
+            <td>青鱼在全球范围内都有分布，是一种重要的海钓鱼类</td>
+            <td>25°C</td>
+            <td>2°C</td>
+            <td>10°C</td>
+        </tr>
+        <tr>
+            <td>fish12</td>
+            <td>Flounder</td>
+            <td>温带鱼</td>
+            <td><img src="/../static/images/flounder.jpg" width="250" height="150"></td>
+            <td>扁平的海水鱼类，常见于北半球的沿海水域</td>
+            <td>25°C</td>
+            <td>5°C</td>
+            <td>15°C</td>
+        </tr>
+        <tr>
+            <td>fish13</td>
+            <td>Snapper</td>
+            <td>热带鱼</td>
+            <td><img src="/../static/images/snapper.jpg" width="250" height="150"></td>
+            <td>包括多种海水鱼类，如红鲷</td>
+            <td>32°C</td>
+            <td>20°C</td>
+            <td>25°C</td>
+        </tr>
+        <tr>
+            <td>fish14</td>
+            <td>Mackerel</td>
+            <td>温带鱼</td>
+            <td><img src="/../static/images/makerel.jpg" width="250" height="150"></td>
+            <td>包括多种海水鱼类，如鲭鱼</td>
+            <td>30°C</td>
+            <td>10°C</td>
+            <td>20°C</td>
+        </tr>
+        <tr>
+            <td>fish15</td>
+            <td>固海凿石者</td>
+            <td>海嗣</td>
+            <td><img src="/../static/images/guhai.png" width="250" height="150"></td>
+            <td>一种来自泰拉的美丽生物</td>
+            <td>100°C</td>
+            <td>-100°C</td>
+            <td>20°C</td>
+        </tr>
+        <tr>
+            <td>fish16</td>
+            <td>斯卡蒂</td>
+            <td>阿戈尔</td>
+            <td><img src="/../static/images/skadi.png" width="170" height="200"></td>
+            <td>这是蒂蒂，她很可爱，她是虎鲸</td>
+            <td>100°C</td>
+            <td>-100°C</td>
+            <td>20°C</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="video-container">
+    <video width="640" height="360" controls>
+      <source src="/../static/images/video.mp4" type="video/mp4">
+    </video>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>编辑渔场数据</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../static/lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../static/css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">渔场</label>
+        <div class="layui-input-block">
+            <input type="text" name="fishery_name" id="fishery_name" lay-verify="required"
+                   value="{{ current_situation.fishery_name }}" class="layui-input" disabled>
+            <input type="hidden" name="id" id="id" value="{{ current_situation.id }}">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">日期</label>
+        <div class="layui-input-block">
+            <input type="text" name="record_date" id="record_date" lay-verify="required"
+                   value="{{ current_situation.record_date }}" class="layui-input" disabled>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">时间</label>
+        <div class="layui-input-inline">
+            <input type="text" name="record_time" placeholder="时分" value="{{ current_situation.record_time }}"
+                   autocomplete="off" class="layui-input"
+                   disabled>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">温度</label>
+        <div class="layui-input-block">
+            <input type="number" name="water_temp" placeholder="请输入温度℃" lay-verify="required"
+                   value="{{ current_situation.water_temp }}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">水质</label>
+        <div class="layui-input-block">
+            <select name="water_quality" lay-verify="required">
+                {% for water_quality in water_list %}
+                    <option value="{{ water_quality }}" {{ 'selected' if current_situation.water_quality==water_quality else '' }}>{{ water_quality }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">PH值</label>
+        <div class="layui-input-block">
+            <input type="number" name="ph_value" placeholder="请输入PH值（0-14）" value="{{ current_situation.ph_value }}"
+                   class="layui-input"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">溶解氧</label>
+        <div class="layui-input-block">
+            <input type="number" name="dissolved_oxygen" placeholder="请输入风速(km/h)" value="{{ current_situation.dissolved_oxygen }}"
+                   class="layui-input"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">浊度</label>
+        <div class="layui-input-block">
+            <input type="text" name="turbidity" placeholder="请输入湿度" value="{{ current_situation.turbidity }}" class="layui-input"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">水产名称</label>
+        <div class="layui-input-block">
+            <select name="fish_name" lay-verify="required">
+                {% for fish_name in fish_list %}
+                    <option value="{{ fish_name }}" {{ 'selected' if current_situation.fish_name==fish_name else '' }}>{{ fish_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">水产数量</label>
+        <div class="layui-input-block">
+            <input type="number" name="fish_count" placeholder="请输入水产数量" value="{{ current_situation.fish_count }}"
+                   class="layui-input" lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认</button>
+        </div>
+    </div>
+</div>
+<script src="../../../static/lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'laydate', 'layer'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            laydate = layui.laydate,
+            $ = layui.$;
+        laydate.render({
+            elem: '#record_date'
+        })
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            data = data.field
+            if (!data.ph_value || data.ph_value < 0 || data.ph_value > 14) {
+                return layer.msg("请输入正确的PH值", {icon: 5});
+            }
+            if (!data.dissolved_oxygen || data.dissolved_oxygen < 0) {
+                return layer.msg("请输入正确的溶解氧", {icon: 5});
+            }
+            if (!data.fish_count || data.fish_count < 0) {
+                return layer.msg("请输入正确的水产数量", {icon: 5});
+            }
+            if (data.ph_value<7.5||data.ph_value>8.5) {
+                layer.open({
+                    type: 1,
+                    title: '警告',
+                    area: ['500px', 'auto'], //宽高
+                    shadeClose: false,
+                    closeBtn: 1,
+                    content: '<div style="padding: 10px 20px 40px 20px"><h2>'+'数据异常！请注意！'
+                });
+                var formData = {
+                    'title': 'PH值异常！',
+                    'user_name': '管理员',
+                    'content': '您添加的数据已触发警报，请及时关注渔场PH值'
+                };
+                $.post('/add/notice', formData, function (response){});
+            }
+            if (data.dissolved_oxygen<4||data.dissolved_oxygen>8) {
+                layer.open({
+                    type: 1,
+                    title: '警告',
+                    area: ['500px', 'auto'], //宽高
+                    content: '<div style="padding: 10px 20px 40px 20px"><h2>'+'溶氧量数据异常！请注意！'
+                });
+                var formData = {
+                    'title': '溶氧量异常！',
+                    'user_name': '管理员',
+                    'content': '您添加的数据已触发警报，请及时关注渔场溶氧量'
+                };
+                $.post('/add/notice', formData, function (response){});
+            }
+            if (data.water_temp<10||data.water_temp>32) {
+                layer.open({
+                    type: 1,
+                    title: '警告',
+                    area: ['500px', 'auto'], //宽高
+                    content: '<div style="padding: 10px 20px 40px 20px"><h2>'+'水温数据异常！请注意！'
+                });
+                var formData = {
+                    'title': '水温异常！',
+                    'user_name': '管理员',
+                    'content': '您添加的数据已触发警报，请及时关注渔场水温'
+                };
+                $.post('/add/notice', formData, function (response){});
+            }
+            $.post('/edit/current/situation', data, function (response) {
+                if (response.success) {
+                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(iframeIndex);
+                    parent.reload();
+                    parent.layer.msg(response.msg, {icon: 6});
+                    var formData = {
+                        'log': '编辑' + data.fishery_name+'数据',
+                    };
+                    $.post('/add/slog', formData, function (response) {});
+                } else {
+                    parent.layer.msg(response.msg, {icon: 5});
+                }
+            })
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>

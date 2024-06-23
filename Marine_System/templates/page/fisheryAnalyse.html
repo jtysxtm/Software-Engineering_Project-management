@@ -1,0 +1,483 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>渔场数据分析</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../static/lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../static/lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../../static/css/public.css" media="all">
+    <style>
+        .top-panel {
+            border: 1px solid #eceff9;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .top-panel > .layui-card-body {
+            height: 60px;
+        }
+
+        .top-panel-number {
+            line-height: 60px;
+            font-size: 30px;
+            border-right: 1px solid #eceff9;
+        }
+
+        .top-panel-tips {
+            line-height: 30px;
+            font-size: 12px
+        }
+    </style>
+</head>
+<body>
+<!--<div class="layuimini-container">-->
+<div class="layuimini-main">
+
+    <div class="table-search-fieldset" style="background-color:#ffffff;margin-bottom: 10pt;padding: 10px 10px 5px 10px">
+
+        <div style="margin: 10px 10px 10px 10px">
+            <form class="layui-form layui-form-pane">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">省份</label>
+                        <div class="layui-input-inline">
+                            <select name="province" lay-verify="required" lay-filter="province" id="province">
+                                <option value="天津">天津</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">渔场名称</label>
+                        <div class="layui-input-inline">
+                            <select name="fishery_name" lay-verify="required" id="fishery_name">
+                                <option value="">上海</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                                   <span class="layui-btn layui-btn-primary" onclick="changeCity()"><i
+                                           class="layui-icon"></i> 搜 索
+                        </span>
+                        </span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md4">
+            <div style="background-color:#ffffff;min-height:240px;padding: 10px">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="100">
+                        <col width="200">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td>渔场</td>
+                        <td id="area">天津西屯桥渔场</td>
+                    </tr>
+                    <tr>
+                        <td>时间</td>
+                        <td id="record_date">2023/2/4 12：10</td>
+                    </tr>
+                    <tr>
+                        <td>水质</td>
+                        <td id="water_quality">I</td>
+                    </tr>
+                    <tr>
+                        <td>水温</td>
+                        <td id="water_temp">10℃</td>
+                    </tr>
+                    <tr>
+                        <td>浊度</td>
+                        <td id="turbidity">40</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md4">
+            <div id="temp-records" style="background-color:#ffffff;min-height:240px;padding: 10px"></div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md4">
+            <div id="oxygen-records" style="background-color:#ffffff;min-height:240px;padding: 10px"></div>
+        </div>
+    </div>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md4">
+            <div style="background-color:#ffffff;min-height:240px;padding: 10px">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="100">
+                        <col width="200">
+                        <col>
+                    </colgroup>
+                    <tbody>
+
+                    <tr>
+                        <td>PH值</td>
+                        <td id="ph_value">7.69</td>
+                    </tr>
+                    <tr>
+                        <td>溶氧量</td>
+                        <td id="dissolved_oxygen">9.66</td>
+                    </tr>
+                    <tr>
+                        <td>水产数量</td>
+                        <td id="fish_count">1Km/h</td>
+                    </tr>
+                    <tr>
+                        <td>水产名称</td>
+                        <td id="fish_name">Bream</td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md4">
+            <div id="ph-records" style="background-color:#ffffff;min-height:240px;padding: 10px"></div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md4">
+            <div id="turbidity-records" style="background-color:#ffffff;min-height:240px;padding: 10px"></div>
+        </div>
+
+    </div>
+
+</div>
+<!--</div>-->
+<script src="../../static/lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../../static/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['layer', 'echarts', 'form'], function () {
+        var $ = layui.jquery,
+            layer = layui.layer,
+            form = layui.form,
+            echarts = layui.echarts;
+
+        function load_province() {
+            //渲染省份
+            let province = ['天津市', '北京市', '河北省', '山西省', '内蒙古', '辽宁省', '吉林省', '黑龙江', '上海市', '江苏省', '浙江省', '安徽省', '福建省', '江西省', '山东省', '河南省','海南省','四川省','广东省','湖南省','湖北省']
+            let html_text = ""
+            province.forEach(i => {
+                html_text += "<option value='" + i + "'>" + i + "</option>"
+            })
+            $("#province").html(html_text)
+        }
+
+        window.onChange = function (v) {
+            v = v || $('#province').val() || '上海'
+            let city_list = {
+                "天津市": ["西屯桥渔场", "井冈山桥渔场", "土门楼渔场", "万家码头渔场", "果河桥渔场", "海河渔场", "黄白桥渔场", "三岔口渔场", "于桥渔场"],
+                "北京市": ["怀柔渔场","罗庄渔场","白石桥渔场","大关桥渔场"],
+                "河北省": ["戴河口渔场"],
+                "山西省": ["汾河渔场"],
+                "内蒙古": ["新发渔场"],
+                "辽宁省": ["爱河渔场", "石井渔场", "延吉渔场"],
+                "吉林省": ["白沙滩渔场"],
+                "黑龙江": ["松花江渔场"],
+                "上海市": ["临江渔场", "前桥渔场"],
+                "江苏省": ["五里湖渔场", "陈东港渔场", "大港桥渔场", "大港桥渔场"],
+                "浙江省": ["太湖渔场"],
+                "安徽省": ["巢湖渔场"],
+                "福建省": ["圆头桥渔场"],
+                "江西省": ["兴宁渔场"],
+                "山东省": ["张秋渔场"],
+                "河南省": ["洛河渔场"],
+                "海南省": ["百仞滩渔场"],
+                "四川省": ["三川渔场"],
+                "广东省": ["白沙街渔场","步洲渔场","大泉渔场","凤江渔场","平洲渔场","永安渔场"],
+                "湖南省": ["八仙桥渔场"],
+                "湖北省": ["白家湾渔场"],
+            }
+            let list = city_list[v]
+            let html_text = ""
+            list.forEach(i => {
+                html_text += "<option value='" + i + "'>" + i + "</option>"
+            })
+            $("#fishery_name").html(html_text)
+            form.render()
+        }
+        load_province()
+        onChange()
+        data_history()
+
+        form.on('select(province)', function (data) {
+            onChange(data.value)
+        })
+
+        function data_history() {
+            let city = $("#fishery_name").val() || "天津"
+            $.post('/data/china/weather?fishery_name=' + city, '', function (res) {
+                let model = res.model;
+                let result_data = res.result_data;
+                $("#area").html(model.province + model.fishery_name);
+                $("#record_date").html(model.record_date + model.record_time);
+                $("#water_quality").html(model.water_quality);
+                $("#water_temp").html(model.water_temp + "℃");
+                $("#fish_name").html(model.fish_name);
+                $("#dissolved_oxygen").html(model.dissolved_oxygen);
+                $("#ph_value").html(model.ph_value);
+                $("#fish_count").html(model.fish_count);
+                /**
+                 * 报表功能
+                 */
+                var tempRecords = echarts.init(document.getElementById('temp-records'), 'walden');
+
+                var optionRecords = {
+                    title: {
+                        text: '温度变化分析'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        },
+                        formatter: '{b} <br/>{a} : {c} ℃'
+                    },
+                    legend: {
+                        data: ['温度']
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: result_data.x
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value} ℃'
+                            }
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '温度',
+                            type: 'line',
+                            stack: '温度',
+                            areaStyle: {},
+                            data: result_data.water_temp
+                        }
+                    ]
+                };
+                tempRecords.setOption(optionRecords);
+
+                /**
+                 * 溶解氧含量
+                 */
+                var oxygenRecords = echarts.init(document.getElementById('oxygen-records'), 'walden');
+
+                var optionRecords = {
+                    title: {
+                        text: '溶解氧变化分析'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        },
+                        formatter: '{b} <br/>{a} : {c} '
+                    },
+                    legend: {
+                        data: ['溶解氧']
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: result_data.x
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value} '
+                            }
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '溶解氧',
+                            type: 'line',
+                            stack: '溶解氧',
+                            areaStyle: {},
+                            data: result_data.dissolved_oxygen
+                        }
+                    ]
+                };
+                oxygenRecords.setOption(optionRecords);
+
+                /**
+                 * PH值变化
+                 */
+                var phRecords = echarts.init(document.getElementById('ph-records'), 'walden');
+                var optionRecords = {
+                    title: {
+                        text: 'PH值变化分析'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        },
+                        formatter: '{b} <br/>{a} : {c} '
+                    },
+                    legend: {
+                        data: ['PH值']
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: result_data.x
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value}'
+                            }
+                        }
+                    ],
+                    series: [
+                        {
+                            name: 'PH值',
+                            type: 'line',
+                            stack: 'PH值',
+                            areaStyle: {},
+                            data: result_data.ph_value
+                        }
+                    ]
+                };
+                phRecords.setOption(optionRecords);
+
+                /**
+                 * 浊度变化
+                 */
+                var turbidityRecords = echarts.init(document.getElementById('turbidity-records'), 'walden');
+                var optionRecords = {
+                    title: {
+                        text: '浊度变化分析'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        },
+                        formatter: '{b} <br/>{a} : {c}'
+                    },
+                    legend: {
+                        data: ['AQI']
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: result_data.x
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '浊度',
+                            type: 'line',
+                            stack: '浊度',
+                            areaStyle: {},
+                            data: result_data.turbidity
+                        }
+                    ]
+                };
+                turbidityRecords.setOption(optionRecords);
+
+
+                // echarts 窗口缩放自适应
+                window.onresize = function () {
+                    tempRecords.resize();
+                    oxygenRecords.resize();
+                    phRecords.resize();
+                    turbidityRecords.resize();
+                }
+            })
+        }
+
+        // 监听搜索操作
+        window.changeCity = function () {
+            data_history()
+        }
+    });
+</script>
+</body>
+</html>

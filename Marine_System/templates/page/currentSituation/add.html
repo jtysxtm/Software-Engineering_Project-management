@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>新增渔场数据</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../static/lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../static/css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">省份</label>
+        <div class="layui-input-block">
+            <select name="province" lay-verify="required" lay-filter="province" id="province">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">渔场</label>
+        <div class="layui-input-block">
+            <select name="fishery_name" lay-verify="required" id="fishery_name">
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">日期</label>
+        <div class="layui-input-block">
+            <input type="text" name="record_date" id="record_date" lay-verify="required" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">时间</label>
+        <div class="layui-input-inline" style="width: 80px;">
+            <input type="number" name="record_time_h" placeholder="小时" autocomplete="off" class="layui-input"
+                   lay-verify="required"
+                   onkeyup="value=value.replace(/[^\d]/g,'').replace(/^0{1,}/g,'')">
+        </div>
+        <div class="layui-form-mid">:</div>
+        <div class="layui-input-inline" style="width: 80px;">
+            <input type="number" name="record_time_m" placeholder="分钟" autocomplete="off" class="layui-input"
+                   lay-verify="required"
+                   onkeyup="value=value.replace(/[^\d]/g,'').replace(/^0{1,}/g,'')">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">水温</label>
+        <div class="layui-input-block">
+            <input type="number" name="water_temp" placeholder="请输入水温℃" lay-verify="required" value=""
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">水质类别</label>
+        <div class="layui-input-block">
+            <select name="water_quality" lay-verify="required">
+                {% for water_quality in water_quality_list %}
+                    <option value="{{ water_quality }}">{{ water_quality }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">PH值</label>
+        <div class="layui-input-block">
+            <input type="number" name="ph_value" placeholder="请输入PH值（0-14）" value="" class="layui-input"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">溶氧量</label>
+        <div class="layui-input-block">
+            <input type="number" name="dissolved_oxygen" placeholder="请输入溶氧量" value="" class="layui-input"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">浊度</label>
+        <div class="layui-input-block">
+            <input type="text" name="turbidity" placeholder="请输入浊度" value="" class="layui-input" lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">水产名称</label>
+        <div class="layui-input-block">
+            <select name="fish_name" lay-verify="required">
+                {% for fish_name in fish_list %}
+                    <option value="{{ fish_name }}">{{ fish_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">水产数目</label>
+        <div class="layui-input-block">
+            <input type="number" name="fish_count" placeholder="" value="" class="layui-input" lay-verify="required">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认</button>
+        </div>
+    </div>
+</div>
+<script src="../../../static/lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'laydate', 'layer'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            laydate = layui.laydate,
+            $ = layui.$;
+        laydate.render({
+            elem: '#record_date'
+        })
+
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            data = data.field
+            if (!data.record_time_h || data.record_time_h < 0 || data.record_time_h >= 24) {
+                return layer.msg("请输入正确的小时", {icon: 5});
+            }
+            if (!data.record_time_m || data.record_time_m < 0 || data.record_time_m >= 60) {
+                return layer.msg("请输入正确的分钟", {icon: 5});
+            }
+            data.record_time = data.record_time_h + ":" + data.record_time_m
+            if (!data.ph_value || data.ph_value < 0 || data.ph_value > 14) {
+                return layer.msg("请输入正确的PH值", {icon: 5});
+            }
+            if (!data.dissolved_oxygen || data.dissolved_oxygen < 0) {
+                return layer.msg("请输入正确的溶氧量", {icon: 5});
+            }
+            if (!data.fish_count || data.fish_count < 0) {
+                return layer.msg("请输入正确的水产数目", {icon: 5});
+            }
+            if (data.ph_value<7.5||data.ph_value>8.5) {
+                layer.open({
+                    type: 1,
+                    title: '警告',
+                    area: ['500px', 'auto'], //宽高
+                    shadeClose: false,
+                    closeBtn: 1,
+                    content: '<div style="padding: 10px 20px 40px 20px"><h2>'+'数据异常！请注意！'
+                });
+                var formData = {
+                    'title': 'PH值异常！',
+                    'user_name': '管理员',
+                    'content': '您添加的数据已触发警报，请及时关注渔场PH值'
+                };
+                $.post('/add/notice', formData, function (response){});
+            }
+            if (data.dissolved_oxygen<4||data.dissolved_oxygen>8) {
+                layer.open({
+                    type: 1,
+                    title: '警告',
+                    area: ['500px', 'auto'], //宽高
+                    content: '<div style="padding: 10px 20px 40px 20px"><h2>'+'溶氧量数据异常！请注意！'
+                });
+                var formData = {
+                    'title': '溶氧量异常！',
+                    'user_name': '管理员',
+                    'content': '您添加的数据已触发警报，请及时关注渔场溶氧量'
+                };
+                $.post('/add/notice', formData, function (response){});
+            }
+            if (data.water_temp<10||data.water_temp>32) {
+                layer.open({
+                    type: 1,
+                    title: '警告',
+                    area: ['500px', 'auto'], //宽高
+                    content: '<div style="padding: 10px 20px 40px 20px"><h2>'+'水温数据异常！请注意！'
+                });
+                var formData = {
+                    'title': '水温异常！',
+                    'user_name': '管理员',
+                    'content': '您添加的数据已触发警报，请及时关注渔场水温'
+                };
+                $.post('/add/notice', formData, function (response){});
+            }
+            $.post('/add/current/situation', data, function (response) {
+                if (response.success) {
+                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(iframeIndex);
+                    parent.reload();
+                    parent.layer.msg(response.msg, {icon: 6});
+                    var formData = {
+                        'log': '添加数据到' + data.fishery_name,
+                    };
+                    $.post('/add/slog', formData, function (response) {});
+
+                } else {
+                    parent.layer.msg(response.msg, {icon: 5});
+                }
+            })
+            return false;
+        });
+<!--    ！！！！！这里记得改一下！！！！-->
+        window.onChange = function (v) {
+            v = v || $('#province').val() || '天津';
+            let city_list = {
+                "天津市": ["西屯桥渔场", "井冈山桥渔场", "土门楼渔场", "万家码头渔场", "果河桥渔场", "海河渔场", "黄白桥渔场", "三岔口渔场", "于桥渔场"],
+                "北京市": ["怀柔渔场","罗庄渔场","白石桥渔场","大关桥渔场"],
+                "河北省": ["戴河口渔场"],
+                "山西省": ["汾河渔场"],
+                "内蒙古": ["新发渔场"],
+                "辽宁省": ["爱河渔场", "石井渔场", "延吉渔场"],
+                "吉林省": ["白沙滩渔场"],
+                "黑龙江": ["松花江渔场"],
+                "上海市": ["临江渔场", "前桥渔场"],
+                "江苏省": ["五里湖渔场", "陈东港渔场", "大港桥渔场", "大港桥渔场"],
+                "浙江省": ["太湖渔场"],
+                "安徽省": ["巢湖渔场"],
+                "福建省": ["圆头桥渔场"],
+                "江西省": ["兴宁渔场"],
+                "山东省": ["张秋渔场"],
+                "河南省": ["洛河渔场"],
+                "海南省": ["百仞滩渔场"],
+                "四川省": ["三川渔场"],
+                "广东省": ["白沙街渔场","步洲渔场","大泉渔场","凤江渔场","平洲渔场","永安渔场"],
+                "湖南省": ["八仙桥渔场"],
+                "湖北省": ["白家湾渔场"],
+            }
+            let list = city_list[v]
+            let html_text = ""
+            list.forEach(i => {
+                html_text += "<option value='" + i + "'>" + i + "</option>"
+            })
+            $("#fishery_name").html(html_text)
+            form.render()
+        }
+
+        function load_province() {
+            //渲染省份
+            let province = ['天津市', '北京市', '河北省', '山西省', '内蒙古', '辽宁省', '吉林省', '黑龙江', '上海市', '江苏省', '浙江省', '安徽省', '福建省', '江西省', '山东省', '河南省','海南省','四川省','广东省','湖南省','湖北省']
+            let html_text = ""
+            province.forEach(i => {
+                html_text += "<option value='" + i + "'>" + i + "</option>"
+            })
+            $("#province").html(html_text)
+        }
+
+        form.on('select(province)', function (data) {
+            onChange(data.value)
+        })
+
+        load_province()
+        onChange()
+    });
+</script>
+</body>
+</html>
