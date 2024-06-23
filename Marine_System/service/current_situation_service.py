@@ -5,11 +5,11 @@ from utils.Result import Result
 from utils.SySQL import SQLManager
 
 """
-全国区域渔场数据相关业务逻辑服务层
+全国区域渔场数据相关业务逻辑服务�?
 """
 
 
-# 根据渔场名称查询最新数据
+# 根据渔场名称查询最新数�?
 def select_current_situation_by_fishery(fishery):
     sql = "SELECT * FROM currentsituation WHERE fishery_name=%s order by create_time desc limit 1"
     sqlManager = SQLManager()

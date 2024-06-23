@@ -31,7 +31,7 @@ def ph_fishery_data(fishery_name):
     return {'x': x_data, 'ph_value_data': y_data}
 
 
-# 渔场溶解氧
+# 渔场溶解�?
 def oxygen_fishery_data(fishery_name):
     sqlManager = SQLManager()
     data_sql = f"SELECT record_date,dissolved_oxygen FROM specialfishery WHERE fishery_name ='{fishery_name}' ORDER BY record_date DESC LIMIT 15"
@@ -91,10 +91,10 @@ def top_page_data():
     temp_data = [{'fishery': i['fishery_name'], '温度': i['water_temp']} for i in temp_list]
     ph_top_sql = "SELECT fishery_name, ph_value FROM currentsituation WHERE is_old=0 ORDER BY ph_value DESC LIMIT 15"
     ph_list = sqlManager.get_list(ph_top_sql)
-    ph_data = [{'fishery': i['fishery_name'], 'PH值': float(i['ph_value'])} for i in ph_list]
+    ph_data = [{'fishery': i['fishery_name'], 'PH�?': float(i['ph_value'])} for i in ph_list]
     oxygen_top_sql = "SELECT fishery_name, dissolved_oxygen FROM currentsituation WHERE is_old=0 ORDER BY dissolved_oxygen DESC LIMIT 15"
     oxygen_list = sqlManager.get_list(oxygen_top_sql)
-    oxygen_data = [{'fishery': i['fishery_name'], '溶氧量': i['dissolved_oxygen']} for i in oxygen_list]
+    oxygen_data = [{'fishery': i['fishery_name'], '溶氧�?': i['dissolved_oxygen']} for i in oxygen_list]
     sqlManager.close()
     return {'num_data': num_data, 'table_data': table_data, 'temp_data': temp_data, 'ph_data': ph_data, 'oxygen_data': oxygen_data}
 
