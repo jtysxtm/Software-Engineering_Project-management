@@ -86,3 +86,6 @@ class SQLManager(object):
     # 退出with语句块自动执行
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
+
+
+# R2 over
